@@ -33,7 +33,7 @@ let ODataConfiguration = class ODataConfiguration {
     // }
     getEntityUri(entityKey, _typeName) {
         // ToDo: Fix string based keys
-        if (!parseInt(entityKey, 10)) {
+        if (isNaN(entityKey)) {
             return this.baseUrl + '/' + _typeName + "('" + entityKey + "')";
         }
         return this.baseUrl + '/' + _typeName + '(' + entityKey + ')';
