@@ -1,4 +1,4 @@
-import { URLSearchParams, Http, Response, RequestOptions } from '@angular/http';
+import { URLSearchParams, Http, Response, RequestOptions, RequestMethod } from '@angular/http';
 import { Observable, Operator } from 'rxjs/rx';
 import { ODataConfiguration } from './config';
 
@@ -98,49 +98,16 @@ export abstract class OperationWithKeyAndEntity<T> extends ODataOperation<T> {
 
 
 export class GetOperation<T> extends OperationWithKey<T> {
-    private _links: string;
-
-    public Links(typeName: string) {
-        this._links = typeName;
-        return this;
-    }
 
     public Exec(): Observable<T> {
-        let requestUrl;
-        if (!!this._links) {
-            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
-        } else {
-            requestUrl = this.getEntityUri(this.key);
-        }
-        return super.handleResponse(this.http.get(requestUrl, this.getRequestOptions()));
+        return super.handleResponse(this.http.get(this.getEntityUri(this.key), this.getRequestOptions()));
     }
 }
 
 export class PostOperation<T> extends OperationWithEntity<T>{
-    private _links: string;
-
-    constructor(protected _typeName: string,
-                protected config: ODataConfiguration,
-                protected http: Http,
-                protected entity: T,
-                protected key?: string) {
-                    super(_typeName, config, http, entity);
-                }
-
-    public Links(typeName: string) {
-        this._links = typeName;
-        return this;
-    }
-
     public Exec():Observable<T>{    //ToDo: Check ODataV4
         let body = JSON.stringify(this.entity);
-        let requestUrl;
-        if (!!this._links) {
-            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
-        } else {
-            requestUrl = this.config.baseUrl + '/' + this._typeName;
-        }
-        return super.handleResponse(this.http.post(requestUrl, body, this.getRequestOptions()));
+        return this.handleResponse(this.http.post(this.config.baseUrl + "/"+this._typeName, body, this.getRequestOptions()));
     }
 }
 
@@ -157,3 +124,28 @@ export class PostOperation<T> extends OperationWithEntity<T>{
 //         return this.handleResponse(this.http.put(this.getEntityUri(this.key),body,this.getRequestOptions()));
 //     }
 // }
+
+export class RefOperation extends OperationWithKeyAndEntity<{ ['@odata.id']: string; }> {
+    private _ref: string;
+
+    constructor(protected _typeName: string,
+                protected config: ODataConfiguration,
+                protected http: Http,
+                protected key: string,
+                protected entity: { ['@odata.id']: string; },
+                private _verb: RequestMethod) {
+                    super(_typeName, config, http, key, entity);
+                }
+
+    public Ref(typeName: string) {
+        this._ref = typeName;
+    }
+
+    public Exec(): Observable<Response> {
+        let request = this.getRequestOptions();
+        request.method = this._verb;
+        request.body = JSON.stringify(this.entity);
+        return this.http.request(this.getEntityUri(this.key) + '/' + this._ref + '/' + this.config.keys.ref, request);
+    }
+
+}

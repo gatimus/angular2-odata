@@ -1,8 +1,8 @@
-import { URLSearchParams, Http, Response, Headers, RequestOptions } from '@angular/http';
+import { URLSearchParams, Http, Response, Headers, RequestOptions, RequestMethod } from '@angular/http';
 import { Observable, Operator } from 'rxjs/rx';
 import { ODataConfiguration } from './config';
 import { ODataQuery } from './query';
-import { GetOperation, PostOperation } from './operation';
+import { ODataOperation, GetOperation, PostOperation, RefOperation } from './operation';
 
 export class ODataService<T> {
 
@@ -21,8 +21,12 @@ export class ODataService<T> {
     //     return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
     // }
 
-    public Post(entity: T, key?: string): PostOperation<T> {
-        return new PostOperation<T>(this.TypeName, this.config, this.http, entity);
+    public Post(entity: T | { ['@odata.id']: string; }, key?: string): PostOperation<T> | RefOperation {
+        if (!!key) {
+            return new RefOperation(this.TypeName, this.config, this.http, key, (<{ ['@odata.id']: string; }>entity), RequestMethod.Post);
+        } else {
+            return new PostOperation<T>(this.TypeName, this.config, this.http, (<T>entity));
+        }
     }
 
     public CustomAction(key: string, actionName: string, postdata: any) {

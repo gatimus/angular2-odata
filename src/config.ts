@@ -10,7 +10,6 @@ export class KeyConfigs {
     public orderBy: string = '$orderby';
     public select: string = '$select';
     public expand: string = '$expand';
-    public links: string= '$links';
     public ref: string= '$ref';
 }
 
