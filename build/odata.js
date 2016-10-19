@@ -1,5 +1,5 @@
 "use strict";
-const rx_1 = require('rxjs/Rx');
+const rx_1 = require('rxjs/rx');
 const query_1 = require('./query');
 const operation_1 = require('./operation');
 class ODataService {

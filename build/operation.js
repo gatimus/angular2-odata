@@ -1,6 +1,6 @@
 "use strict";
 const http_1 = require('@angular/http');
-const rx_1 = require('rxjs/Rx');
+const rx_1 = require('rxjs/rx');
 class ODataOperation {
     constructor(_typeName, config, http) {
         this._typeName = _typeName;
