@@ -23,7 +23,7 @@ export class ODataConfiguration {
 
     public getEntityUri(entityKey: string, _typeName: string) {
         // ToDo: Fix string based keys
-        if (!parseInt(entityKey, 10)) {
+        if (isNaN(entityKey)) {
             return this.baseUrl + '/' + _typeName + "('" + entityKey + "')";
         }
 
