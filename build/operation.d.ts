@@ -44,5 +44,18 @@ export declare abstract class OperationWithKeyAndEntity<T> extends ODataOperatio
     abstract Exec(...args: any[]): Observable<any>;
 }
 export declare class GetOperation<T> extends OperationWithKey<T> {
+    private _links;
+    Links(typeName: string): this;
+    Exec(): Observable<T>;
+}
+export declare class PostOperation<T> extends OperationWithEntity<T> {
+    protected _typeName: string;
+    protected config: ODataConfiguration;
+    protected http: Http;
+    protected entity: T;
+    protected key?: string;
+    private _links;
+    constructor(_typeName: string, config: ODataConfiguration, http: Http, entity: T, key?: string);
+    Links(typeName: string): this;
     Exec(): Observable<T>;
 }

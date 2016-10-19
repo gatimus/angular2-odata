@@ -20,6 +20,8 @@ class KeyConfigs {
         this.orderBy = '$orderby';
         this.select = '$select';
         this.expand = '$expand';
+        this.links = '$links';
+        this.ref = '$ref';
     }
 }
 exports.KeyConfigs = KeyConfigs;
@@ -33,7 +35,7 @@ let ODataConfiguration = class ODataConfiguration {
     // }
     getEntityUri(entityKey, _typeName) {
         // ToDo: Fix string based keys
-        if (isNaN(entityKey)) {
+        if (!/^[0-9]*$/.test(entityKey)) {
             return this.baseUrl + '/' + _typeName + "('" + entityKey + "')";
         }
         return this.baseUrl + '/' + _typeName + '(' + entityKey + ')';

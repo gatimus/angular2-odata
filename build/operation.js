@@ -87,17 +87,48 @@ class OperationWithKeyAndEntity extends ODataOperation {
 }
 exports.OperationWithKeyAndEntity = OperationWithKeyAndEntity;
 class GetOperation extends OperationWithKey {
+    Links(typeName) {
+        this._links = typeName;
+        return this;
+    }
     Exec() {
-        return super.handleResponse(this.http.get(this.getEntityUri(this.key), this.getRequestOptions()));
+        let requestUrl;
+        if (!!this._links) {
+            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
+        }
+        else {
+            requestUrl = this.getEntityUri(this.key);
+        }
+        return super.handleResponse(this.http.get(requestUrl, this.getRequestOptions()));
     }
 }
 exports.GetOperation = GetOperation;
-// export class PostOperation<T> extends OperationWithEntity<T>{
-//     public Exec():Observable<T>{    //ToDo: Check ODataV4
-//         let body = JSON.stringify(this.entity);
-//         return this.handleResponse(this.http.post(this.config.baseUrl + "/"+this._typeName, body, this.getRequestOptions()));
-//     }
-// }
+class PostOperation extends OperationWithEntity {
+    constructor(_typeName, config, http, entity, key) {
+        super(_typeName, config, http, entity);
+        this._typeName = _typeName;
+        this.config = config;
+        this.http = http;
+        this.entity = entity;
+        this.key = key;
+    }
+    Links(typeName) {
+        this._links = typeName;
+        return this;
+    }
+    Exec() {
+        let body = JSON.stringify(this.entity);
+        let requestUrl;
+        if (!!this._links) {
+            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
+        }
+        else {
+            requestUrl = this.config.baseUrl + '/' + this._typeName;
+        }
+        return super.handleResponse(this.http.post(requestUrl, body, this.getRequestOptions()));
+    }
+}
+exports.PostOperation = PostOperation;
 // export class PatchOperation<T> extends OperationWithKeyAndEntity<T>{
 //     public Exec():Observable<Response>{    //ToDo: Check ODataV4
 //         let body = JSON.stringify(this.entity);

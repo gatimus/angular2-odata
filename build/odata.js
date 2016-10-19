@@ -12,11 +12,14 @@ class ODataService {
         return this._typeName;
     }
     Get(key) {
-        return new operation_1.GetOperation(this._typeName, this.config, this.http, key);
+        return new operation_1.GetOperation(this.TypeName, this.config, this.http, key);
     }
-    Post(entity) {
-        let body = JSON.stringify(entity);
-        return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
+    // public Post(entity: T): Observable<T> {
+    //     let body = JSON.stringify(entity);
+    //     return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
+    // }
+    Post(entity, key) {
+        return new operation_1.PostOperation(this.TypeName, this.config, this.http, entity);
     }
     CustomAction(key, actionName, postdata) {
         let body = JSON.stringify(postdata);

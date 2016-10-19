@@ -98,18 +98,51 @@ export abstract class OperationWithKeyAndEntity<T> extends ODataOperation<T> {
 
 
 export class GetOperation<T> extends OperationWithKey<T> {
+    private _links: string;
+
+    public Links(typeName: string) {
+        this._links = typeName;
+        return this;
+    }
 
     public Exec(): Observable<T> {
-        return super.handleResponse(this.http.get(this.getEntityUri(this.key), this.getRequestOptions()));
+        let requestUrl;
+        if (!!this._links) {
+            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
+        } else {
+            requestUrl = this.getEntityUri(this.key);
+        }
+        return super.handleResponse(this.http.get(requestUrl, this.getRequestOptions()));
     }
 }
 
-// export class PostOperation<T> extends OperationWithEntity<T>{
-//     public Exec():Observable<T>{    //ToDo: Check ODataV4
-//         let body = JSON.stringify(this.entity);
-//         return this.handleResponse(this.http.post(this.config.baseUrl + "/"+this._typeName, body, this.getRequestOptions()));
-//     }
-// }
+export class PostOperation<T> extends OperationWithEntity<T>{
+    private _links: string;
+
+    constructor(protected _typeName: string,
+                protected config: ODataConfiguration,
+                protected http: Http,
+                protected entity: T,
+                protected key?: string) {
+                    super(_typeName, config, http, entity);
+                }
+
+    public Links(typeName: string) {
+        this._links = typeName;
+        return this;
+    }
+
+    public Exec():Observable<T>{    //ToDo: Check ODataV4
+        let body = JSON.stringify(this.entity);
+        let requestUrl;
+        if (!!this._links) {
+            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
+        } else {
+            requestUrl = this.config.baseUrl + '/' + this._typeName;
+        }
+        return super.handleResponse(this.http.post(requestUrl, body, this.getRequestOptions()));
+    }
+}
 
 // export class PatchOperation<T> extends OperationWithKeyAndEntity<T>{
 //     public Exec():Observable<Response>{    //ToDo: Check ODataV4

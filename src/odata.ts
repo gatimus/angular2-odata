@@ -2,7 +2,7 @@ import { URLSearchParams, Http, Response, Headers, RequestOptions } from '@angul
 import { Observable, Operator } from 'rxjs/rx';
 import { ODataConfiguration } from './config';
 import { ODataQuery } from './query';
-import { GetOperation } from './operation';
+import { GetOperation, PostOperation } from './operation';
 
 export class ODataService<T> {
 
@@ -13,12 +13,16 @@ export class ODataService<T> {
     }
 
     public Get(key: string): GetOperation<T> {
-        return new GetOperation<T>(this._typeName, this.config, this.http, key);
+        return new GetOperation<T>(this.TypeName, this.config, this.http, key);
     }
 
-    public Post(entity: T): Observable<T> {
-        let body = JSON.stringify(entity);
-        return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
+    // public Post(entity: T): Observable<T> {
+    //     let body = JSON.stringify(entity);
+    //     return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
+    // }
+
+    public Post(entity: T, key?: string): PostOperation<T> {
+        return new PostOperation<T>(this.TypeName, this.config, this.http, entity);
     }
 
     public CustomAction(key: string, actionName: string, postdata: any) {
