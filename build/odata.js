@@ -1,4 +1,5 @@
 "use strict";
+const http_1 = require('@angular/http');
 const rx_1 = require('rxjs/rx');
 const query_1 = require('./query');
 const operation_1 = require('./operation');
@@ -19,7 +20,12 @@ class ODataService {
     //     return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
     // }
     Post(entity, key) {
-        return new operation_1.PostOperation(this.TypeName, this.config, this.http, entity);
+        if (!!key) {
+            return new operation_1.RefOperation(this.TypeName, this.config, this.http, key, entity, http_1.RequestMethod.Post);
+        }
+        else {
+            return new operation_1.PostOperation(this.TypeName, this.config, this.http, entity);
+        }
     }
     CustomAction(key, actionName, postdata) {
         let body = JSON.stringify(postdata);
@@ -30,8 +36,12 @@ class ODataService {
         return this.http.patch(this.getEntityUri(key), body, this.config.postRequestOptions);
     }
     Put(entity, key) {
-        let body = JSON.stringify(entity);
-        return this.handleResponse(this.http.put(this.getEntityUri(key), body, this.config.postRequestOptions));
+        if (!!entity['@odata.id']) {
+            return new operation_1.RefOperation(this.TypeName, this.config, this.http, key, entity, http_1.RequestMethod.Put);
+        }
+        else {
+            return new operation_1.PutOperation(this.TypeName, this.config, this.http, key, entity);
+        }
     }
     Delete(key) {
         return this.http.delete(this.getEntityUri(key), this.config.requestOptions);

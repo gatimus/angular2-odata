@@ -7,7 +7,6 @@ export declare class KeyConfigs {
     orderBy: string;
     select: string;
     expand: string;
-    links: string;
     ref: string;
 }
 export declare class ODataConfiguration {

@@ -20,7 +20,6 @@ class KeyConfigs {
         this.orderBy = '$orderby';
         this.select = '$select';
         this.expand = '$expand';
-        this.links = '$links';
         this.ref = '$ref';
     }
 }

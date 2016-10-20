@@ -1,4 +1,4 @@
-import { URLSearchParams, Http, Response, RequestOptions } from '@angular/http';
+import { URLSearchParams, Http, Response, RequestOptions, RequestMethod } from '@angular/http';
 import { Observable } from 'rxjs/rx';
 import { ODataConfiguration } from './config';
 export declare abstract class ODataOperation<T> {
@@ -44,18 +44,29 @@ export declare abstract class OperationWithKeyAndEntity<T> extends ODataOperatio
     abstract Exec(...args: any[]): Observable<any>;
 }
 export declare class GetOperation<T> extends OperationWithKey<T> {
-    private _links;
-    Links(typeName: string): this;
     Exec(): Observable<T>;
 }
 export declare class PostOperation<T> extends OperationWithEntity<T> {
+    Exec(): Observable<T>;
+}
+export declare class PutOperation<T> extends OperationWithKeyAndEntity<T> {
+    Exec(): Observable<T>;
+}
+export declare class RefOperation extends OperationWithKeyAndEntity<{
+    ['@odata.id']: string;
+}> {
     protected _typeName: string;
     protected config: ODataConfiguration;
     protected http: Http;
-    protected entity: T;
-    protected key?: string;
-    private _links;
-    constructor(_typeName: string, config: ODataConfiguration, http: Http, entity: T, key?: string);
-    Links(typeName: string): this;
-    Exec(): Observable<T>;
+    protected key: string;
+    protected entity: {
+        ['@odata.id']: string;
+    };
+    private _verb;
+    private _ref;
+    constructor(_typeName: string, config: ODataConfiguration, http: Http, key: string, entity: {
+        ['@odata.id']: string;
+    }, _verb: RequestMethod);
+    Ref(typeName: string): void;
+    Exec(): Observable<Response>;
 }

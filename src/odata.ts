@@ -2,7 +2,7 @@ import { URLSearchParams, Http, Response, Headers, RequestOptions, RequestMethod
 import { Observable, Operator } from 'rxjs/rx';
 import { ODataConfiguration } from './config';
 import { ODataQuery } from './query';
-import { ODataOperation, GetOperation, PostOperation, RefOperation } from './operation';
+import { ODataOperation, GetOperation, PostOperation, PutOperation, RefOperation } from './operation';
 
 export class ODataService<T> {
 
@@ -39,9 +39,12 @@ export class ODataService<T> {
         return this.http.patch(this.getEntityUri(key), body, this.config.postRequestOptions);
     }
 
-    public Put(entity: T,  key: string): Observable<T> {
-        let body = JSON.stringify(entity);
-        return this.handleResponse(this.http.put(this.getEntityUri(key), body, this.config.postRequestOptions));
+    public Put(entity: T | { ['@odata.id']: string; },  key: string): PutOperation<T> | RefOperation  {
+        if (!!(<any>entity)['@odata.id']) {
+            return new RefOperation(this.TypeName, this.config, this.http, key, (<{ ['@odata.id']: string; }>entity), RequestMethod.Put);
+        } else {
+            return new PutOperation<T>(this.TypeName, this.config, this.http, key, (<T>entity));
+        }
     }
 
     public Delete(key: string): Observable<Response> {

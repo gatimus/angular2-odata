@@ -118,12 +118,12 @@ export class PostOperation<T> extends OperationWithEntity<T>{
 //     }
 // }
 
-// export class PutOperation<T> extends OperationWithKeyAndEntity<T>{
-//     public Exec(){
-//         let body = JSON.stringify(this.entity);
-//         return this.handleResponse(this.http.put(this.getEntityUri(this.key),body,this.getRequestOptions()));
-//     }
-// }
+export class PutOperation<T> extends OperationWithKeyAndEntity<T>{
+    public Exec(){
+        let body = JSON.stringify(this.entity);
+        return this.handleResponse(this.http.put(this.getEntityUri(this.key),body,this.getRequestOptions()));
+    }
+}
 
 export class RefOperation extends OperationWithKeyAndEntity<{ ['@odata.id']: string; }> {
     private _ref: string;

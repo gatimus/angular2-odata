@@ -87,45 +87,15 @@ class OperationWithKeyAndEntity extends ODataOperation {
 }
 exports.OperationWithKeyAndEntity = OperationWithKeyAndEntity;
 class GetOperation extends OperationWithKey {
-    Links(typeName) {
-        this._links = typeName;
-        return this;
-    }
     Exec() {
-        let requestUrl;
-        if (!!this._links) {
-            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
-        }
-        else {
-            requestUrl = this.getEntityUri(this.key);
-        }
-        return super.handleResponse(this.http.get(requestUrl, this.getRequestOptions()));
+        return super.handleResponse(this.http.get(this.getEntityUri(this.key), this.getRequestOptions()));
     }
 }
 exports.GetOperation = GetOperation;
 class PostOperation extends OperationWithEntity {
-    constructor(_typeName, config, http, entity, key) {
-        super(_typeName, config, http, entity);
-        this._typeName = _typeName;
-        this.config = config;
-        this.http = http;
-        this.entity = entity;
-        this.key = key;
-    }
-    Links(typeName) {
-        this._links = typeName;
-        return this;
-    }
     Exec() {
         let body = JSON.stringify(this.entity);
-        let requestUrl;
-        if (!!this._links) {
-            requestUrl = this.getEntityUri(this.key) + '/' + this.config.keys.links + '/' + this._links;
-        }
-        else {
-            requestUrl = this.config.baseUrl + '/' + this._typeName;
-        }
-        return super.handleResponse(this.http.post(requestUrl, body, this.getRequestOptions()));
+        return this.handleResponse(this.http.post(this.config.baseUrl + "/" + this._typeName, body, this.getRequestOptions()));
     }
 }
 exports.PostOperation = PostOperation;
@@ -135,10 +105,32 @@ exports.PostOperation = PostOperation;
 //         return this.http.patch(this.getEntityUri(this.key),body,this.getRequestOptions());
 //     }
 // }
-// export class PutOperation<T> extends OperationWithKeyAndEntity<T>{
-//     public Exec(){
-//         let body = JSON.stringify(this.entity);
-//         return this.handleResponse(this.http.put(this.getEntityUri(this.key),body,this.getRequestOptions()));
-//     }
-// }
+class PutOperation extends OperationWithKeyAndEntity {
+    Exec() {
+        let body = JSON.stringify(this.entity);
+        return this.handleResponse(this.http.put(this.getEntityUri(this.key), body, this.getRequestOptions()));
+    }
+}
+exports.PutOperation = PutOperation;
+class RefOperation extends OperationWithKeyAndEntity {
+    constructor(_typeName, config, http, key, entity, _verb) {
+        super(_typeName, config, http, key, entity);
+        this._typeName = _typeName;
+        this.config = config;
+        this.http = http;
+        this.key = key;
+        this.entity = entity;
+        this._verb = _verb;
+    }
+    Ref(typeName) {
+        this._ref = typeName;
+    }
+    Exec() {
+        let request = this.getRequestOptions();
+        request.method = this._verb;
+        request.body = JSON.stringify(this.entity);
+        return this.http.request(this.getEntityUri(this.key) + '/' + this._ref + '/' + this.config.keys.ref, request);
+    }
+}
+exports.RefOperation = RefOperation;
 //# sourceMappingURL=operation.js.map
