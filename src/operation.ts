@@ -104,25 +104,33 @@ export class GetOperation<T> extends OperationWithKey<T> {
     }
 }
 
-export class PostOperation<T> extends OperationWithEntity<T>{
-    public Exec():Observable<T>{    //ToDo: Check ODataV4
+export class PostOperation<T> extends OperationWithEntity<T> {
+    public Exec(): Observable<T> {    // ToDo: Check ODataV4
         let body = JSON.stringify(this.entity);
-        return this.handleResponse(this.http.post(this.config.baseUrl + "/"+this._typeName, body, this.getRequestOptions()));
+        return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this._typeName, body, this.getRequestOptions()));
     }
 }
 
-// export class PatchOperation<T> extends OperationWithKeyAndEntity<T>{
-//     public Exec():Observable<Response>{    //ToDo: Check ODataV4
+export namespace PostOperation {
+    declare function Ref(typeName: string): RefOperation;
+}
+
+// export class PatchOperation<T> extends OperationWithKeyAndEntity<T> {
+//     public Exec(): Observable<Response> {    // ToDo: Check ODataV4
 //         let body = JSON.stringify(this.entity);
-//         return this.http.patch(this.getEntityUri(this.key),body,this.getRequestOptions());
+//         return this.http.patch(this.getEntityUri(this.key), body, this.getRequestOptions());
 //     }
 // }
 
-export class PutOperation<T> extends OperationWithKeyAndEntity<T>{
-    public Exec(){
+export class PutOperation<T> extends OperationWithKeyAndEntity<T> {
+    public Exec() {
         let body = JSON.stringify(this.entity);
-        return this.handleResponse(this.http.put(this.getEntityUri(this.key),body,this.getRequestOptions()));
+        return this.handleResponse(this.http.put(this.getEntityUri(this.key), body, this.getRequestOptions()));
     }
+}
+
+export namespace PutOperation {
+    declare function Ref(typeName: string): RefOperation;
 }
 
 export class RefOperation extends OperationWithKeyAndEntity<{ ['@odata.id']: string; }> {
@@ -137,8 +145,9 @@ export class RefOperation extends OperationWithKeyAndEntity<{ ['@odata.id']: str
                     super(_typeName, config, http, key, entity);
                 }
 
-    public Ref(typeName: string) {
+    public Ref(typeName: string): RefOperation {
         this._ref = typeName;
+        return this;
     }
 
     public Exec(): Observable<Response> {

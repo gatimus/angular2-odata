@@ -49,8 +49,12 @@ export declare class GetOperation<T> extends OperationWithKey<T> {
 export declare class PostOperation<T> extends OperationWithEntity<T> {
     Exec(): Observable<T>;
 }
+export declare namespace PostOperation {
+}
 export declare class PutOperation<T> extends OperationWithKeyAndEntity<T> {
     Exec(): Observable<T>;
+}
+export declare namespace PutOperation {
 }
 export declare class RefOperation extends OperationWithKeyAndEntity<{
     ['@odata.id']: string;
@@ -67,6 +71,6 @@ export declare class RefOperation extends OperationWithKeyAndEntity<{
     constructor(_typeName: string, config: ODataConfiguration, http: Http, key: string, entity: {
         ['@odata.id']: string;
     }, _verb: RequestMethod);
-    Ref(typeName: string): void;
+    Ref(typeName: string): RefOperation;
     Exec(): Observable<Response>;
 }

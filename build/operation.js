@@ -95,14 +95,16 @@ exports.GetOperation = GetOperation;
 class PostOperation extends OperationWithEntity {
     Exec() {
         let body = JSON.stringify(this.entity);
-        return this.handleResponse(this.http.post(this.config.baseUrl + "/" + this._typeName, body, this.getRequestOptions()));
+        return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this._typeName, body, this.getRequestOptions()));
     }
 }
 exports.PostOperation = PostOperation;
-// export class PatchOperation<T> extends OperationWithKeyAndEntity<T>{
-//     public Exec():Observable<Response>{    //ToDo: Check ODataV4
+(function (PostOperation) {
+})(PostOperation = exports.PostOperation || (exports.PostOperation = {}));
+// export class PatchOperation<T> extends OperationWithKeyAndEntity<T> {
+//     public Exec(): Observable<Response> {    // ToDo: Check ODataV4
 //         let body = JSON.stringify(this.entity);
-//         return this.http.patch(this.getEntityUri(this.key),body,this.getRequestOptions());
+//         return this.http.patch(this.getEntityUri(this.key), body, this.getRequestOptions());
 //     }
 // }
 class PutOperation extends OperationWithKeyAndEntity {
@@ -112,6 +114,8 @@ class PutOperation extends OperationWithKeyAndEntity {
     }
 }
 exports.PutOperation = PutOperation;
+(function (PutOperation) {
+})(PutOperation = exports.PutOperation || (exports.PutOperation = {}));
 class RefOperation extends OperationWithKeyAndEntity {
     constructor(_typeName, config, http, key, entity, _verb) {
         super(_typeName, config, http, key, entity);
@@ -124,6 +128,7 @@ class RefOperation extends OperationWithKeyAndEntity {
     }
     Ref(typeName) {
         this._ref = typeName;
+        return this;
     }
     Exec() {
         let request = this.getRequestOptions();
