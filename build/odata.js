@@ -1,6 +1,6 @@
 "use strict";
 const http_1 = require('@angular/http');
-const rx_1 = require('rxjs/rx');
+const Rx_1 = require('rxjs/Rx');
 const query_1 = require('./query');
 const operation_1 = require('./operation');
 class ODataService {
@@ -57,7 +57,7 @@ class ODataService {
             .catch((err, caught) => {
             if (this.config.handleError)
                 this.config.handleError(err, caught);
-            return rx_1.Observable.throw(err);
+            return Rx_1.Observable.throw(err);
         });
     }
     extractData(res) {
