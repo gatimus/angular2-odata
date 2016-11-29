@@ -43,11 +43,17 @@ class ODataService {
             return new operation_1.RefOperation(this.TypeName, this.config, this.http, key, entity, http_1.RequestMethod.Put);
         }
         else {
-            return new operation_1.PutOperation(this.TypeName, this.config, this.http, key, entity);
+            let config = this.config;
+            if (!!entity['@odata.etag'])
+                config.requestOptions.headers.append('If-Match', entity['@odata.etag']);
+            return new operation_1.PutOperation(this.TypeName, config, this.http, key, entity);
         }
     }
-    Delete(key) {
-        return this.http.delete(this.getEntityUri(key), this.config.requestOptions);
+    Delete(key, etag) {
+        let requestOptions = this.config.requestOptions;
+        if (!!etag)
+            requestOptions.headers.append('If-Match', etag);
+        return this.http.delete(this.getEntityUri(key), requestOptions);
     }
     Query() {
         return new query_1.ODataQuery(this.TypeName, this.config, this.http);

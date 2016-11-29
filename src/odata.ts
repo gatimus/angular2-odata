@@ -45,12 +45,16 @@ export class ODataService<T> {
         if (!!(<any>entity)['@odata.id']) {
             return new RefOperation(this.TypeName, this.config, this.http, key, (<{ ['@odata.id']: string; }>entity), RequestMethod.Put);
         } else {
-            return new PutOperation<T>(this.TypeName, this.config, this.http, key, (<T>entity));
+            let config = this.config;
+            if (!!entity['@odata.etag']) config.requestOptions.headers.append('If-Match', entity['@odata.etag']);
+            return new PutOperation<T>(this.TypeName, config, this.http, key, (<T>entity));
         }
     }
 
-    public Delete(key: string): Observable<Response> {
-        return this.http.delete(this.getEntityUri(key), this.config.requestOptions);
+    public Delete(key: string, etag?: string): Observable<Response> {
+        let requestOptions = this.config.requestOptions;
+        if (!!etag) requestOptions.headers.append('If-Match', etag);
+        return this.http.delete(this.getEntityUri(key), requestOptions);
     }
 
     public Query(): ODataQuery<T> {

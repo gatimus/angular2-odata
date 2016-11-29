@@ -18,7 +18,7 @@ export declare class ODataService<T> {
     Put(entity: T | {
         ['@odata.id']: string;
     }, key: string): PutOperation<T> | RefOperation;
-    Delete(key: string): Observable<Response>;
+    Delete(key: string, etag?: string): Observable<Response>;
     Query(): ODataQuery<T>;
     protected getEntityUri(entityKey: string): string;
     protected handleResponse(entity: Observable<Response>): Observable<T>;
