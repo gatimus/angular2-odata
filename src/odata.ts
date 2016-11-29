@@ -35,8 +35,10 @@ export class ODataService<T> {
     }
 
     public Patch(entity: any, key: string): Observable<Response> {
+        let requestOptions = this.config.postRequestOptions;
+        if (!!entity['@odata.etag']) requestOptions.headers.append('If-Match', entity['@odata.etag']);
         let body = JSON.stringify(entity);
-        return this.http.patch(this.getEntityUri(key), body, this.config.postRequestOptions);
+        return this.http.patch(this.getEntityUri(key), body, requestOptions);
     }
 
     public Put(entity: T | { ['@odata.id']: string; },  key: string): PutOperation<T> | RefOperation  {

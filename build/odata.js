@@ -32,8 +32,11 @@ class ODataService {
         return this.handleResponse(this.http.post(this.getEntityUri(key) + '/' + actionName, body, this.config.requestOptions));
     }
     Patch(entity, key) {
+        let requestOptions = this.config.postRequestOptions;
+        if (!!entity['@odata.etag'])
+            requestOptions.headers.append('If-Match', entity['@odata.etag']);
         let body = JSON.stringify(entity);
-        return this.http.patch(this.getEntityUri(key), body, this.config.postRequestOptions);
+        return this.http.patch(this.getEntityUri(key), body, requestOptions);
     }
     Put(entity, key) {
         if (!!entity['@odata.id']) {
