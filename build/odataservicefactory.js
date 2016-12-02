@@ -8,25 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-const core_1 = require('@angular/core');
-const http_1 = require('@angular/http');
-const odata_1 = require('./odata');
-const config_1 = require('./config');
-let ODataServiceFactory = class ODataServiceFactory {
-    constructor(http, config) {
+var core_1 = require('@angular/core');
+var http_1 = require('@angular/http');
+var odata_1 = require('./odata');
+var config_1 = require('./config');
+var ODataServiceFactory = (function () {
+    function ODataServiceFactory(http, config) {
         this.http = http;
         this.config = config;
     }
-    CreateService(typeName, handleError) {
+    ODataServiceFactory.prototype.CreateService = function (typeName, handleError) {
         return new odata_1.ODataService(typeName, this.http, this.config);
-    }
-    CreateServiceWithOptions(typeName, config) {
+    };
+    ODataServiceFactory.prototype.CreateServiceWithOptions = function (typeName, config) {
         return new odata_1.ODataService(typeName, this.http, config);
-    }
-};
-ODataServiceFactory = __decorate([
-    core_1.Injectable(), 
-    __metadata('design:paramtypes', [http_1.Http, config_1.ODataConfiguration])
-], ODataServiceFactory);
+    };
+    ODataServiceFactory = __decorate([
+        core_1.Injectable(), 
+        __metadata('design:paramtypes', [http_1.Http, config_1.ODataConfiguration])
+    ], ODataServiceFactory);
+    return ODataServiceFactory;
+}());
 exports.ODataServiceFactory = ODataServiceFactory;
 //# sourceMappingURL=odataservicefactory.js.map

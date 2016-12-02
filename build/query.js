@@ -1,59 +1,70 @@
 "use strict";
-const Rx_1 = require('rxjs/Rx');
-const operation_1 = require('./operation');
-class PagedResult {
-}
-exports.PagedResult = PagedResult;
-class ODataQuery extends operation_1.ODataOperation {
-    constructor(_typeName, config, http) {
-        super(_typeName, config, http);
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Rx_1 = require('rxjs/Rx');
+var operation_1 = require('./operation');
+var PagedResult = (function () {
+    function PagedResult() {
     }
-    Filter(filter) {
+    return PagedResult;
+}());
+exports.PagedResult = PagedResult;
+var ODataQuery = (function (_super) {
+    __extends(ODataQuery, _super);
+    function ODataQuery(_typeName, config, http) {
+        _super.call(this, _typeName, config, http);
+    }
+    ODataQuery.prototype.Filter = function (filter) {
         this._filter = filter;
         return this;
-    }
+    };
     ;
-    Top(top) {
+    ODataQuery.prototype.Top = function (top) {
         this._top = top;
         return this;
-    }
+    };
     ;
-    Skip(skip) {
+    ODataQuery.prototype.Skip = function (skip) {
         this._skip = skip;
         return this;
-    }
-    OrderBy(orderBy) {
+    };
+    ODataQuery.prototype.OrderBy = function (orderBy) {
         this._orderBy = orderBy;
         return this;
-    }
-    Exec() {
-        let params = this.getQueryParams();
-        let config = this.config;
+    };
+    ODataQuery.prototype.Exec = function () {
+        var _this = this;
+        var params = this.getQueryParams();
+        var config = this.config;
         return this.http.get(this.buildResourceURL(), { search: params })
-            .map(res => this.extractArrayData(res, config))
-            .catch((err, caught) => {
-            if (this.config.handleError)
-                this.config.handleError(err, caught);
+            .map(function (res) { return _this.extractArrayData(res, config); })
+            .catch(function (err, caught) {
+            if (_this.config.handleError)
+                _this.config.handleError(err, caught);
             return Rx_1.Observable.throw(err);
         });
-    }
-    ExecWithCount() {
-        let params = this.getQueryParams();
+    };
+    ODataQuery.prototype.ExecWithCount = function () {
+        var _this = this;
+        var params = this.getQueryParams();
         params.set('$count', 'true'); // OData v4 only
-        let config = this.config;
+        var config = this.config;
         return this.http.get(this.buildResourceURL(), { search: params })
-            .map(res => this.extractArrayDataWithCount(res, config))
-            .catch((err, caught) => {
-            if (this.config.handleError)
-                this.config.handleError(err, caught);
+            .map(function (res) { return _this.extractArrayDataWithCount(res, config); })
+            .catch(function (err, caught) {
+            if (_this.config.handleError)
+                _this.config.handleError(err, caught);
             return Rx_1.Observable.throw(err);
         });
-    }
-    buildResourceURL() {
+    };
+    ODataQuery.prototype.buildResourceURL = function () {
         return this.config.baseUrl + '/' + this._typeName + '/';
-    }
-    getQueryParams() {
-        let params = super.getParams();
+    };
+    ODataQuery.prototype.getQueryParams = function () {
+        var params = _super.prototype.getParams.call(this);
         if (this._filter)
             params.set(this.config.keys.filter, this._filter);
         if (this._top)
@@ -63,13 +74,14 @@ class ODataQuery extends operation_1.ODataOperation {
         if (this._orderBy)
             params.set(this.config.keys.orderBy, this._orderBy);
         return params;
-    }
-    extractArrayData(res, config) {
+    };
+    ODataQuery.prototype.extractArrayData = function (res, config) {
         return config.extractQueryResultData(res);
-    }
-    extractArrayDataWithCount(res, config) {
+    };
+    ODataQuery.prototype.extractArrayDataWithCount = function (res, config) {
         return config.extractQueryResultDataWithCount(res);
-    }
-}
+    };
+    return ODataQuery;
+}(operation_1.ODataOperation));
 exports.ODataQuery = ODataQuery;
 //# sourceMappingURL=query.js.map
